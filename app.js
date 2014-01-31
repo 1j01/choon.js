@@ -15,10 +15,9 @@ $(function(){
 	
 	var smooth = true;
 	var noteLength = 10/1000;
-	$("[value=smooth]").prop("checked",true);
+	$(":radio[value=smooth]").prop("checked",true);
 	$(":radio").on("change",function(){
 		smooth = $("[value=smooth]").is(":checked");
-		console.log(smooth);
 	});
 	$("#note-length").on("change now",function(){
 		noteLength = Number($("#note-length").val()) / 1000;
