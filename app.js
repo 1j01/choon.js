@@ -33,9 +33,8 @@ $(function(){
 		volume.gain.value = 0.1;
 		
 		gain = actx.createGain();
-		gain.connect(actx.destination);
-		//gain.gain.value = 0.1;
-		gain.gain.setValueAtTime(0,actx.currentTime);
+		gain.connect(volume);
+		gain.gain.value = 0;
 		
 		osc = actx.createOscillator();
 		osc.start(0);
@@ -87,7 +86,6 @@ $(function(){
 		osc.frequency.cancelScheduledValues(actx.currentTime);
 		gain.gain.cancelScheduledValues(actx.currentTime);
 		gain.gain.setValueAtTime(0,actx.currentTime);
-		gain.gain.value = 0;
 	}
 	
 });
