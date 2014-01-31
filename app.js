@@ -11,6 +11,7 @@ $(function(){
 	var $output = $("output");
 	var output = function(_){$output.text(_).removeClass("error");};
 	var error = function(_){$output.text(_).addClass("error");};
+	onerror = error;
 	
 	var smooth = true;
 	$("[value=smooth]").prop("checked",true);
