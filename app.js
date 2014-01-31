@@ -14,15 +14,23 @@ $(function(){
 	onerror = error;
 	
 	var smooth = true;
+	var noteLength = 10/1000;
 	$("[value=smooth]").prop("checked",true);
 	$(":radio").on("change",function(){
 		smooth = $("[value=smooth]").is(":checked");
 		console.log(smooth);
 	});
+	$("#note-length").on("change now",function(){
+		noteLength = Number($("#note-length").val()) / 1000;
+	}).triggerHandler("now");
 	
 	var actx, osc, gain;
 	if(AudioContext){
 		actx = new AudioContext();
+		
+		volume = actx.createGain();
+		volume.connect(actx.destination);
+		volume.gain.value = 0.1;
 		
 		gain = actx.createGain();
 		gain.connect(actx.destination);
@@ -53,7 +61,6 @@ $(function(){
 	function play(song){
 		stop();
 		var songStartTime = actx.currentTime;
-		var noteLength = 0.05;//100ms
 		var base = 440;//A
 		for(var i=0; i<=song.length; i++){
 			var t = songStartTime + i * noteLength;
@@ -68,10 +75,10 @@ $(function(){
 				var freq = Math.pow(2, Math.log(base) / Math.LN2 + note/12);
 				if(smooth){
 					osc.frequency.exponentialRampToValueAtTime(freq, t);
-					gain.gain.linearRampToValueAtTime(0.1, t);
+					gain.gain.linearRampToValueAtTime(1, t);
 				}else{
 					osc.frequency.setValueAtTime(freq, t);
-					gain.gain.setValueAtTime(0.1, t);
+					gain.gain.setValueAtTime(1, t);
 				}
 			}
 		}
