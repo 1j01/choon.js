@@ -116,14 +116,13 @@ choon = function(prog){
 					lastval = REST;
 					break;
 				case "?":
-					var n, used=[];
-					for(var _=0;_<12;_++){
-						while(1){
-							n = rand(12) - 9 + transpose;
-							if(used.indexOf(n) == -1) break;
+					var used = [];
+					while(used.length < 12){
+						var n = rand(12) - 9 + transpose;
+						if(used.indexOf(n) == -1){
+							used.push(n);
+							output.push(n);
 						}
-						used.push(n);
-						output.push(n);
 					}
 					lastval = output[output.length-1];
 					break;
@@ -134,8 +133,8 @@ choon = function(prog){
 	
 	/*Original output method:
 		var s = ">5000";
-		output.forEach(function(v,i,a){
-			s += "\nT100;"+(v==REST?"":v);
+		output.forEach(function(n){
+			s += "\nT100;"+(n==REST?"":n);
 		});
 		return s + ".\n";
 	*/
