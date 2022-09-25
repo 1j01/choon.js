@@ -24,23 +24,7 @@ $(function () {
 	}).triggerHandler("now");
 
 	var actx, osc, gain;
-	if (AudioContext) {
-		actx = new AudioContext();
 
-		volume = actx.createGain();
-		volume.connect(actx.destination);
-		volume.gain.value = 0.1;
-
-		gain = actx.createGain();
-		gain.connect(volume);
-		gain.gain.value = 0;
-
-		osc = actx.createOscillator();
-		osc.start(0);
-		osc.connect(gain);
-	} else {
-		error("No AudioContext! This will be boring.");
-	}
 	//$prog.on("change",
 	$("#play").on("click", function () {
 		try {
@@ -56,7 +40,34 @@ $(function () {
 		stop();
 	});
 
+	function initAudio() {
+		if (actx) {
+			return true;
+		}
+		if (AudioContext) {
+			actx = new AudioContext();
+
+			volume = actx.createGain();
+			volume.connect(actx.destination);
+			volume.gain.value = 0.1;
+
+			gain = actx.createGain();
+			gain.connect(volume);
+			gain.gain.value = 0;
+
+			osc = actx.createOscillator();
+			osc.start(0);
+			osc.connect(gain);
+
+			return true;
+		} else {
+			error("No AudioContext! This will be boring.");
+			return false;
+		}
+	}
+
 	function play(song) {
+		if (!initAudio()) return;
 		stop();
 		var songStartTime = actx.currentTime;
 		var base = 440;//A
