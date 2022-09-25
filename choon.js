@@ -15,6 +15,7 @@ choon = function(prog){
 	var repeatCounts = [];
 	var markers = {};
 	var lastMarker = {};
+	var inCounts; // TODO: initial value? not sure what this variable is, but it was accidentally global before
 
 	var tokenIndex = 0;
 	while(tokens[tokenIndex]){
