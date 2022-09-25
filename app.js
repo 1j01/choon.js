@@ -5,30 +5,40 @@ AudioContext = global.AudioContext || global.webkitAudioContext;
 
 var REST = null;
 
-$(function () {
+window.addEventListener("DOMContentLoaded", function () {
 
-	var $prog = $("textarea");
-	var $output = $("output");
-	var output = function (_) { $output.text(_).removeClass("error"); };
-	var error = function (_) { $output.text(_).addClass("error"); };
+	var $playButton = document.getElementById("play");
+	var $stopButton = document.getElementById("stop");
+	var $prog = document.querySelector("textarea");
+	var $output = document.querySelector("output");
+	var $smoothRadio = document.querySelector("input[value=smooth]");
+	var $radios = document.querySelectorAll("input[name=sound]");
+	var $noteLength = document.getElementById("note-length");
+
+	var output = function (message) { $output.textContent = message; $output.classList.remove("error"); };
+	var error = function (message) { $output.textContent = message; $output.classList.add("error"); };
 	onerror = error;
 
 	var smooth = true;
 	var noteLength = 10 / 1000;
-	$(":radio[value=smooth]").prop("checked", true);
-	$(":radio").on("change", function () {
-		smooth = $("[value=smooth]").is(":checked");
-	});
-	$("#note-length").on("change now", function () {
-		noteLength = Number($("#note-length").val()) / 1000;
-	}).triggerHandler("now");
+	$smoothRadio.checked = true;
+	for (var i = 0; i < $radios.length; i++) {
+		$radios[i].addEventListener("change", function () {
+			smooth = $smoothRadio.checked;
+		});
+	}
+	function updateNoteLength() {
+		noteLength = Number($noteLength.value) / 1000;
+	}
+	updateNoteLength();
+	$noteLength.addEventListener("change", updateNoteLength);
 
 	var actx, osc, gain;
 
-	//$prog.on("change",
-	$("#play").on("click", function () {
+	//$prog.addEventListener("change",
+	$playButton.addEventListener("click", function () {
 		try {
-			var prog = $prog.val();
+			var prog = $prog.value;
 			var song = choon(prog);
 			output("");
 			play(song);
@@ -36,7 +46,7 @@ $(function () {
 			error(e);
 		}
 	});
-	$("#stop").on("click", function () {
+	$stopButton.addEventListener("click", function () {
 		stop();
 	});
 
