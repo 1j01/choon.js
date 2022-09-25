@@ -9,16 +9,16 @@ choon = function(prog){
 		tokens.push(m);
 	});
 	var transpose = 0;
-	var lastval = 0;
+	var lastVal = 0;
 	var output = [];
-	var repeatstarts = [];
-	var repeatcounts = [];
+	var repeatStarts = [];
+	var repeatCounts = [];
 	var markers = {};
-	var lastmarker = {};
+	var lastMarker = {};
 
-	var tokeni = 0;
-	while(tokens[tokeni]){
-		var t = tokens[tokeni];
+	var tokenIndex = 0;
+	while(tokens[tokenIndex]){
+		var t = tokens[tokenIndex];
 		if(t.match(/^[A-G]/)){
 			var val = "C-D-EF-G-A-B".indexOf(t[0]) - 9;
 			if(t[1]){
@@ -36,84 +36,84 @@ choon = function(prog){
 					}
 				}
 			}
-			lastval = val + transpose;
-			output.push(lastval);
+			lastVal = val + transpose;
+			output.push(lastVal);
 		}else if(t.match(/^[a-z]+/)){
 			if(markers[t]){ // save for the x=x case
-				lastmarker = {t: markers[t]};
+				lastMarker = {t: markers[t]};
 			}
 			markers[t] = output.length;
 		}else if(t.match(/^=-?\d+/)){
 			var tp = t.substr(1);//t[1..-1]
-			lastval = output[tp-1] + transpose;
-			output.push(lastval);
+			lastVal = output[tp-1] + transpose;
+			output.push(lastVal);
 		}else if(t.match(/^=[a-z]+/)){
 			var tp = t.substr(1);//t[1..-1]
 			var m = markers[tp];
 			if(m && m < output.length){
-				lastval = output[m] + transpose;
-			}else if(lastmarker[tp]){
-				lastval = output[lastmarker[tp]] + transpose;
+				lastVal = output[m] + transpose;
+			}else if(lastMarker[tp]){
+				lastVal = output[lastMarker[tp]] + transpose;
 			}else{
 				throw new Error('Marker "'+tp+'" was used before being set.');
 			}
-			output.push(lastval);
+			output.push(lastVal);
 		}else{
 			switch(t){
 				case "-":
-					if(lastval) transpose -= lastval;
+					if(lastVal) transpose -= lastVal;
 					break;
 				case "+":
-					if(lastval) transpose += lastval;
+					if(lastVal) transpose += lastVal;
 					break;
 				case ".":
 					transpose = 0;
 					break;
 				case "||:":
-					if(lastval == REST || lastval > 0){
-						repeatstarts.push(tokeni);
-						repeatcounts.push(lastval?lastval:-1);// nil means forever (what does that mean?)
+					if(lastVal == REST || lastVal > 0){
+						repeatStarts.push(tokenIndex);
+						repeatCounts.push(lastVal?lastVal:-1);// nil means forever (what does that mean?)
 					}else{ // jump to end of this repeat
-						incounts = 1;
-						while(tokens[tokeni] && incounts > 0){
-							while(tokens[tokeni] && tokens[tokeni] != ":||"){
-								if(tokens[tokeni] == "||:"){
-									incounts++;
+						inCounts = 1;
+						while(tokens[tokenIndex] && inCounts > 0){
+							while(tokens[tokenIndex] && tokens[tokenIndex] != ":||"){
+								if(tokens[tokenIndex] == "||:"){
+									inCounts++;
 								}
-								tokeni++;
+								tokenIndex++;
 							}
-							incounts--;
+							inCounts--;
 						}
 					}
 					break;
 				case ":||":
-					repeatcounts[repeatcounts.length-1]--;
-					if(repeatcounts[repeatcounts.length-1] == 0){
-						repeatstarts.pop();
-						repeatcounts.pop();
+					repeatCounts[repeatCounts.length-1]--;
+					if(repeatCounts[repeatCounts.length-1] == 0){
+						repeatStarts.pop();
+						repeatCounts.pop();
 					}else{
-						tokeni = repeatstarts[repeatstarts.length-1];
+						tokenIndex = repeatStarts[repeatStarts.length-1];
 					}
 					break;
 				case "~":
-					if(lastval == 0){
-						incounts = 1;
-						while(tokens[tokeni] && incounts > 0){
-							while(tokens[tokeni] && tokens[tokeni] != ":||"){
-								if(tokens[tokeni] == "||:"){
-									incounts++;
+					if(lastVal == 0){
+						inCounts = 1;
+						while(tokens[tokenIndex] && inCounts > 0){
+							while(tokens[tokenIndex] && tokens[tokenIndex] != ":||"){
+								if(tokens[tokenIndex] == "||:"){
+									inCounts++;
 								}
-								tokeni++;
+								tokenIndex++;
 							}
-							incounts--;
+							inCounts--;
 						}
-						repeatstarts.pop();
-						repeatcounts.pop();
+						repeatStarts.pop();
+						repeatCounts.pop();
 					}
 					break;
 				case "%":
 					output.push(REST);
-					lastval = REST;
+					lastVal = REST;
 					break;
 				case "?":
 					var used = [];
@@ -124,11 +124,11 @@ choon = function(prog){
 							output.push(n);
 						}
 					}
-					lastval = output[output.length-1];
+					lastVal = output[output.length-1];
 					break;
 			} // end switch
 		}
-		tokeni++;
+		tokenIndex++;
 	}
 	
 	/*Original output method:
