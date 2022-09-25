@@ -71,7 +71,7 @@ window.addEventListener("DOMContentLoaded", function () {
 
 			return true;
 		} else {
-			error("No AudioContext! This will be boring.");
+			error("Web Audio API is not supported in this browser. Can't play audio.");
 			return false;
 		}
 	}
